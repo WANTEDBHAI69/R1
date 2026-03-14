@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>R1 Community Hall</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+scroll-behavior:smooth;
+}
+
+body{
+
+background:
+linear-gradient(rgba(0,0,0,0.85),rgba(0,0,0,0.9)),
+url("R1logo.png");
+
+background-size:cover;
+background-attachment:fixed;
+color:white;
+
+}
+
+/* HEADER */
+
+header{
+display:flex;
+justify-content:space-between;
+padding:20px 50px;
+background:black;
+position:sticky;
+top:0;
+}
+
+.logo{
+font-size:26px;
+color:#b800ff;
+}
+
+nav a{
+color:#ccc;
+margin-left:20px;
+text-decoration:none;
+}
+
+nav a:hover{
+color:#b800ff;
+}
+
+/* HERO */
+
+.hero{
+position:relative;
+height:90vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+}
+
+.heroText h1{
+font-size:50px;
+}
+
+/* BUTTON */
+
+button{
+padding:12px 30px;
+background:#8a2be2;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:8px;
+}
+
+button:hover{
+box-shadow:0 0 20px purple;
+}
+
+/* GALLERY */
+
+.gallery{
+padding:80px 10%;
+text-align:center;
+}
+
+.galleryGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.galleryGrid img{
+width:100%;
+height:250px;
+object-fit:cover;
+border-radius:10px;
+cursor:pointer;
+transition:0.4s;
+}
+
+.galleryGrid img:hover{
+transform:scale(1.1);
+}
+
+/* LIGHTBOX */
+
+#lightbox{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+#lightbox img{
+max-width:90%;
+max-height:80%;
+}
+
+/* PRICING */
+
+.pricing{
+padding:80px 10%;
+text-align:center;
+}
+
+.cards{
+display:flex;
+gap:30px;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:30px;
+border-radius:15px;
+backdrop-filter:blur(10px);
+width:220px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+box-shadow:0 0 20px purple;
+}
+
+/* CONTACT */
+
+.contact{
+padding:80px 10%;
+text-align:center;
+}
+
+.map iframe{
+width:100%;
+height:350px;
+border:0;
+}
+
+/* ADMIN PANEL */
+
+#adminPanel{
+
+position:fixed;
+top:0;
+right:-400px;
+width:350px;
+height:100%;
+background:#111;
+padding:20px;
+transition:0.5s;
+overflow:auto;
+z-index:2000;
+
+}
+
+#adminPanel.active{
+right:0;
+}
+
+input{
+width:100%;
+margin-bottom:10px;
+padding:8px;
+}
+
+footer{
+background:black;
+padding:20px;
+text-align:center;
+margin-top:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">R1 Hall</div>
+
+<nav>
+
+<a href="#gallery">Gallery</a>
+<a href="#pricing">Packages</a>
+<a href="#contact">Contact</a>
+
+<button onclick="openAdmin()">Admin</button>
+
+</nav>
+
+</header>
+
+<section class="hero">
+
+<div class="heroText">
+
+<h1>R1 Community Hall</h1>
+
+<p>Perfect venue for weddings & events</p>
+
+<button onclick="scrollToContact()">Book Now</button>
+
+</div>
+
+</section>
+
+<section class="gallery" id="gallery">
+
+<h2>Gallery</h2>
+
+<br>
+
+<div class="galleryGrid" id="galleryGrid">
+
+</div>
+
+</section>
+
+<div id="lightbox">
+<img id="lightboxImg">
+</div>
+
+<section class="pricing" id="pricing">
+
+<h2>Packages</h2>
+
+<br>
+
+<div class="cards">
+
+<div class="card">
+<h3>Basic</h3>
+<p id="price1">₹15000</p>
+</div>
+
+<div class="card">
+<h3>Standard</h3>
+<p id="price2">₹30000</p>
+</div>
+
+<div class="card">
+<h3>Wedding</h3>
+<p id="price3">₹60000</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="contact" id="contact">
+
+<h2>Contact</h2>
+
+<p>Phone: 9876543210</p>
+
+<div class="map">
+
+<iframe src="https://www.google.com/maps?q=delhi&output=embed"></iframe>
+
+</div>
+
+</section>
+
+<footer>
+
+© 2026 R1 Community Hall
+
+</footer>
+
+<!-- ADMIN PANEL -->
+
+<div id="adminPanel">
+
+<h2>Admin Panel</h2>
+
+<button onclick="closeAdmin()">Close</button>
+
+<hr>
+
+<h3>Add Gallery Image</h3>
+
+<input type="file" id="imageUpload">
+
+<button onclick="addImage()">Upload Image</button>
+
+<hr>
+
+<h3>Update Prices</h3>
+
+<input id="basic" placeholder="Basic price">
+
+<input id="standard" placeholder="Standard price">
+
+<input id="wedding" placeholder="Wedding price">
+
+<button onclick="savePrices()">Save Prices</button>
+
+</div>
+
+<script>
+
+/* LOAD SAVED IMAGES */
+
+window.onload=function(){
+
+let savedImages=JSON.parse(localStorage.getItem("galleryImages"))||[]
+
+savedImages.forEach(function(src){
+
+let img=document.createElement("img")
+img.src=src
+
+document.getElementById("galleryGrid").appendChild(img)
+
+})
+
+}
+
+/* LIGHTBOX */
+
+let lightbox=document.getElementById("lightbox")
+let lightboxImg=document.getElementById("lightboxImg")
+
+document.addEventListener("click",function(e){
+
+if(e.target.closest(".galleryGrid img")){
+
+lightbox.style.display="flex"
+lightboxImg.src=e.target.src
+
+}
+
+})
+
+lightbox.onclick=()=>lightbox.style.display="none"
+
+/* SCROLL */
+
+function scrollToContact(){
+
+document.querySelector("#contact").scrollIntoView({
+
+behavior:"smooth"
+
+})
+
+}
+
+/* ADMIN PASSWORD */
+
+function openAdmin(){
+
+let pass=prompt("Enter Admin Password")
+
+if(pass==="r1bhavan"){
+
+document.getElementById("adminPanel").classList.add("active")
+
+}else{
+
+alert("Wrong Password")
+
+}
+
+}
+
+function closeAdmin(){
+
+document.getElementById("adminPanel").classList.remove("active")
+
+}
+
+/* IMAGE UPLOAD */
+
+function addImage(){
+
+let file=document.getElementById("imageUpload").files[0]
+
+if(!file) return
+
+let reader=new FileReader()
+
+reader.onload=function(e){
+
+let imgData=e.target.result
+
+let img=document.createElement("img")
+img.src=imgData
+
+document.getElementById("galleryGrid").appendChild(img)
+
+/* SAVE IMAGE */
+
+let images=JSON.parse(localStorage.getItem("galleryImages"))||[]
+images.push(imgData)
+localStorage.setItem("galleryImages",JSON.stringify(images))
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+/* SAVE PRICES */
+
+function savePrices(){
+
+let b=document.getElementById("basic").value
+let s=document.getElementById("standard").value
+let w=document.getElementById("wedding").value
+
+if(b) document.getElementById("price1").innerText="₹"+b
+if(s) document.getElementById("price2").innerText="₹"+s
+if(w) document.getElementById("price3").innerText="₹"+w
+
+}
+
+</script>
+
+</body>
+</html>
